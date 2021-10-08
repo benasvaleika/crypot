@@ -1,6 +1,7 @@
 import DiscordJs, { Client, Collection, Intents } from "discord.js";
 import dotenv from "dotenv";
 import fs from "fs";
+const bitvavo = require("bitvavo")();
 
 dotenv.config();
 
@@ -10,6 +11,15 @@ const client: Client = new DiscordJs.Client({
     Intents.FLAGS.GUILD_MESSAGES,
     Intents.FLAGS.GUILD_MEMBERS,
   ],
+});
+
+bitvavo.options({
+  APIKEY: process.env.BTVKEY,
+  APISECRET: process.env.BTVSECRET,
+  ACCESSWINDOW: 10000,
+  RESTURL: "https://api.bitvavo.com/v2",
+  WSURL: "wss://ws.bitvavo.com/v2/",
+  DEBUGGING: false,
 });
 
 const commandPrefix = "!";
@@ -43,6 +53,8 @@ client.on("messageCreate", (message) => {
     client.commands.get("write")?.execute(message, args);
   } else if (command === "read") {
     client.commands.get("read")?.execute(message, args);
+  } else if (command === "price") {
+    client.commands.get("getPrice")?.execute(message, args);
   }
 });
 
