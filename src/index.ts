@@ -1,6 +1,13 @@
-import DiscordJs, { Client, Collection, Intents } from "discord.js";
+import DiscordJs, {
+  Client,
+  Collection,
+  Intents,
+  TextChannel,
+} from "discord.js";
 import dotenv from "dotenv";
 import fs from "fs";
+import displayDailyPrices from "./functions/dailyPrices";
+import { getChannel, getFirstTrigger } from "./utils/utils";
 const bitvavo = require("bitvavo")();
 
 dotenv.config();
@@ -35,9 +42,25 @@ for (let i = 0; i < commandFiles.length; i++) {
   client.commands.set(command.name, command);
 }
 
-client.on("ready", () => {
+client.on("ready", async (client) => {
   console.log("Crypot is on");
+
+  // Starts daily crypto report loop
+  setTimeout(() => {
+    displayDailyPrices(client);
+    setInterval(() => displayDailyPrices(client), 24 * 60 * 60 * 1000); // 24 hours
+  }, getFirstTrigger("11:00"));
 });
+
+// const generalChannel: any = client.channels.cache.find(
+//   (channel) => channel.name == "general"
+// );
+// generalChannel.send("hello");
+
+// setTimeout(() => {
+//   displayDailyPrices(client);
+//   setInterval(() => displayDailyPrices(client), 24 * 60 * 60 * 1000); // 24 hours
+// }, getFirstTrigger("22:40"));
 
 client.on("messageCreate", (message) => {
   if (!message.content.startsWith(commandPrefix) || message.author.bot) return;

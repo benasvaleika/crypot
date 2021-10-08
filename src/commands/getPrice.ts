@@ -6,17 +6,23 @@ module.exports = {
   async execute(message: any, args: any) {
     try {
       let response = await bitvavo.tickerPrice({});
+      let resultMessage = "";
       for (let entry of response) {
         if (entry.market === "NANO-EUR") {
-          message.channel.send(`NANO kaina: ${entry.price}€`);
+          resultMessage = resultMessage + ` | NANO kaina: ${entry.price}€`;
+          // message.channel.send(`NANO kaina: ${entry.price}€`);
         } else if (entry.market === "BTC-EUR") {
-          message.channel.send(`BTC kaina: ${entry.price}€`);
+          resultMessage = resultMessage + ` | BTC kaina: ${entry.price}€`;
+          // message.channel.send(`BTC kaina: ${entry.price}€`);
         } else if (entry.market === "ETH-EUR") {
-          message.channel.send(`ETH kaina: ${entry.price}€`);
+          resultMessage = resultMessage + ` | ETH kaina: ${entry.price}€`;
+          // message.channel.send(`ETH kaina: ${entry.price}€`);
         } else if (entry.market === "SOL-EUR") {
-          message.channel.send(`SOLANA kaina: ${entry.price}€`);
+          resultMessage = resultMessage + ` | SOLANA kaina: ${entry.price}€`;
+          // message.channel.send(`SOLANA kaina: ${entry.price}€`);
         }
       }
+      message.channel.send(resultMessage);
     } catch (error) {
       console.log(error);
     }
