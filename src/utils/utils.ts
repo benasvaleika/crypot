@@ -1,3 +1,5 @@
+import DiscordJs, { Client } from "discord.js";
+
 export const getFirstTrigger = (timeString: string) => {
   const hour = Number(timeString.split(":")[0]);
   const minute = Number(timeString.split(":")[1]);
@@ -13,4 +15,12 @@ export const getFirstTrigger = (timeString: string) => {
   const msToTrigger = triggerTime.getTime() - currentTime.getTime();
 
   return msToTrigger;
+};
+
+export const getChannel = (client: Client, channelName: string) => {
+  const resultChannel = client.channels.cache.find(
+    (channel: DiscordJs.Channel) => channel.name == "general"
+  );
+
+  return resultChannel;
 };
