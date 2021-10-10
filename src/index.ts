@@ -48,19 +48,9 @@ client.on("ready", async (client) => {
   // Starts daily crypto report loop
   setTimeout(() => {
     displayDailyPrices(client);
-    setInterval(() => displayDailyPrices(client), 24 * 60 * 60 * 1000); // 24 hours
-  }, getFirstTrigger("11:00"));
+    setInterval(() => displayDailyPrices(client), 2 * 60 * 60 * 1000); // 24 hours
+  }, getFirstTrigger("19:45"));
 });
-
-// const generalChannel: any = client.channels.cache.find(
-//   (channel) => channel.name == "general"
-// );
-// generalChannel.send("hello");
-
-// setTimeout(() => {
-//   displayDailyPrices(client);
-//   setInterval(() => displayDailyPrices(client), 24 * 60 * 60 * 1000); // 24 hours
-// }, getFirstTrigger("22:40"));
 
 client.on("messageCreate", (message) => {
   if (!message.content.startsWith(commandPrefix) || message.author.bot) return;
@@ -78,6 +68,8 @@ client.on("messageCreate", (message) => {
     client.commands.get("read")?.execute(message, args);
   } else if (command === "price") {
     client.commands.get("getPrice")?.execute(message, args);
+  } else if (command === "change") {
+    client.commands.get("getChange")?.execute(message, args);
   }
 });
 
