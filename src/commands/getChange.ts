@@ -1,30 +1,66 @@
+import { fetchCandles } from "../utils/utils";
+
 module.exports = {
   name: "getChange",
   description: "Gets price difference between current and past timestamp",
   async execute(message: any, args: any) {
-    const bitvavo = require("bitvavo")();
     const marketArg = args[0].toUpperCase();
+    let timeArg = args[1];
+    if (timeArg === "24h") {
+      timeArg = "1d";
+    }
 
     if (["BTC", "ETH", "NANO", "SOL"].includes(marketArg)) {
-      if (args[1] === "1d" || args[1] === "24h") {
+      if (["1h", "12h", "1d", "7d", "30d"].includes(timeArg)) {
         try {
-          let response = await bitvavo.candles(marketArg + "-EUR", "1h", {
-            limit: 24,
-          });
-          const currDayOpen = response[23][1];
-          const currDayClose = response[0][4];
-          const change = (100 / currDayOpen) * currDayClose - 100;
+          let timeOpen = 0;
+          let timeClose = 0;
+          let response: any;
+
+          if (["1h", "12h", "1d"].includes(timeArg)) {
+            response = await fetchCandles(marketArg, "1h", 24);
+          } else {
+            response = await fetchCandles(marketArg, "1d", 30);
+          }
+
+          switch (timeArg) {
+            case "1h":
+              timeOpen = response[0][1];
+              timeClose = response[0][4];
+              break;
+            case "12h":
+              timeOpen = response[11][1];
+              timeClose = response[0][4];
+              break;
+            case "1d":
+              timeOpen = response[23][1];
+              timeClose = response[0][4];
+              break;
+            case "7d":
+              timeOpen = response[6][1];
+              timeClose = response[0][4];
+              break;
+            case "30d":
+              timeOpen = response[29][1];
+              timeClose = response[0][4];
+              break;
+          }
+
+          const change = (100 / timeOpen) * timeClose - 100;
+
           message.channel.send(
-            `${marketArg} change in 24h: ${
+            `${marketArg} change in ${timeArg}: ${
               Math.round((change + Number.EPSILON) * 100) / 100
             }%`
           );
         } catch (error) {
           console.log(error);
         }
+      } else {
+        message.channel.send("Invalid Time Period (1h, 12h, 1d, 7d, 30d)");
       }
     } else {
-      message.channel.send("Invalid Market");
+      message.channel.send("Invalid Market (BTC, ETH, NANO, SOL)");
     }
   },
 };
