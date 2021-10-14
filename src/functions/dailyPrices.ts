@@ -1,5 +1,4 @@
 const bitvavo = require("bitvavo")();
-import DiscordJs from "discord.js";
 import { getChannel } from "../utils/utils";
 
 const displayDailyPrices = async (client: any) => {
