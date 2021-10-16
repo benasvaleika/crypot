@@ -6,6 +6,7 @@ import DiscordJs, {
 } from "discord.js";
 import dotenv from "dotenv";
 import fs from "fs";
+import displayDailyChange from "./functions/dailyChange";
 import displayDailyPrices from "./functions/dailyPrices";
 import { getChannel, getFirstTrigger } from "./utils/utils";
 const bitvavo = require("bitvavo")();
@@ -48,8 +49,12 @@ client.on("ready", async (client) => {
   // Starts daily crypto report loop
   setTimeout(() => {
     displayDailyPrices(client);
-    setInterval(() => displayDailyPrices(client), 2 * 60 * 60 * 1000); // 24 hours
-  }, getFirstTrigger("19:45"));
+    displayDailyChange(client);
+    setInterval(() => {
+      displayDailyPrices(client);
+      displayDailyChange(client);
+    }, 24 * 60 * 60 * 1000); // 24 hours
+  }, getFirstTrigger("21:00"));
 });
 
 client.on("messageCreate", (message) => {
